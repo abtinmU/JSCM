@@ -1,6 +1,7 @@
 module Repl
 
-using ..Eval
+import ..Parser: eof_object, tokenizer ,InPort, next_token, quotes, read2, parse2, fix_for_macro, atom
+import ..Eval: eval2, Procedure
 
 # Define the load function that evaluates every expression from a file
 function load(filename)

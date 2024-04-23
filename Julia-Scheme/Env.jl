@@ -1,6 +1,7 @@
 module env
 
-using ..Parser
+import ..Utils: Symbol2, Sym, symbol_table, _quote,_if,_set,_define,_lambda,_begin,_definemacro,_quasiquote,_unquote,_unquotesplicing
+import ..Parser: eof_object, tokenizer ,InPort, next_token, quotes, read2, parse2, fix_for_macro, atom
 
 mutable struct Env
     mappings::Dict{Any, Any}

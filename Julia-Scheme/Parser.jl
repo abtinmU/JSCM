@@ -1,6 +1,7 @@
 module Parser
 
-using ..LambdaCalculus
+import ..Utils: Symbol2, Sym, symbol_table, _quote,_if,_set,_define,_lambda,_begin,_definemacro,_quasiquote,_unquote,_unquotesplicing
+import ..Parser: eof_object, tokenizer ,InPort, next_token, quotes, read2, parse2, fix_for_macro, atom
 
 using Base: readline, match
 
@@ -107,5 +108,46 @@ function atom(token::String)
         end
     end
 end
+
+# tests = [
+#     "(quote (testing 1 (2.0) -3.14e159))",
+#     "(+ 2 2)",
+#     "(+ (* 2 100) (* 1 10))",
+#     "(if (> 6 5) (+ 1 1) (+ 2 2))",
+#     "(if (< 6 5) (+ 1 1) (+ 2 2))",
+#     "(define x 3)",
+#     "x",
+#     "(+ x x) => 6",
+#     "(begin (define x 1) (set! x (+ x 1)) (+ x 1))",
+#     "((lambda (x) (+ x x)) 5) => 10",
+#     "(define twice (lambda (x) (* 2 x)))",
+#     "(twice 5)",
+#     "(define compose (lambda (f g) (lambda (x) (f (g x)))))",
+#     "((compose list twice) 5) => (10)",
+#     "(define repeat (lambda (f) (compose f f)))",
+#     "((repeat twice) 5) => 20",
+#     "((repeat (repeat twice)) 5) => 80",
+#     "(define fact (lambda (n) (if (<= n 1) 1 (* n (fact (- n 1))))))",
+#     "(fact 3)",
+#     "(fact 10)",
+#     "(define abs (lambda (n) ((if (> n 0) + -) 0 n)))",
+#     "(list (abs -3) (abs 0) (abs 3))",
+#     "(define combine (lambda (f) (lambda (x y) (if (null? x) (quote ()) (f (list (car x) (car y)) ((combine f) (cdr x) (cdr y)))))))",
+#     "(define zip (combine cons))",
+#     "(zip (list 1 2 3 4) (list 5 6 7 8))",
+#     "(define riff-shuffle (lambda (deck) (begin (define take (lambda (n seq) (if (<= n 0) (quote ()) (cons (car seq) (take (- n 1) (cdr seq)))))) (define drop (lambda (n seq) (if (<= n 0) seq (drop (- n 1) (cdr seq))))) (define mid (lambda (seq) (/ (length seq) 2))) ((combine append) (take (mid deck) deck) (drop (mid deck) deck)))))",
+#     "(riff-shuffle (list 1 2 3 4 5 6 7 8))",
+#     "((repeat riff-shuffle) (list 1 2 3 4 5 6 7 8))",
+#     "(riff-shuffle (riff-shuffle (riff-shuffle (list 1 2 3 4 5 6 7 8))))"
+# ]
+# 
+# # Assuming the 'parse' function and 'tests' list are already defined as per previous discussions
+# 
+# println("Parser Tests")
+# for test in tests
+#     println("Parse>>> ", test)
+#     println(parse2(test))
+#     println("")
+# end
 
 end # module Parser
