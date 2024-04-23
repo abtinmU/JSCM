@@ -34,9 +34,8 @@ mutable struct ContinuationException <: Exception
     retval::Any  # Store the return value here
 end
 
-# This function will be passed to the user-defined procedure to allow escaping
 function throw_continuation(retval)
-    throw(ContinuationException(retval))  # Throw the exception with the retval
+    throw(ContinuationException(retval))
 end
 
 # The callcc function, which simulates call-with-current-continuation
@@ -57,14 +56,11 @@ struct LookupError <: Exception
 end
 
 function find(env::Env, var)
-    # Check if the variable is in the current environment
     if haskey(env.mappings, var.name)
         return env
     elseif env.outer === nothing
-        # If there's no outer environment, throw an error indicating the variable was not found
         throw(KeyError("Variable $var not found"))
     else
-        # Recursively search in the outer environment
         return find(env.outer, var)
     end
 end

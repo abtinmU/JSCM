@@ -3,17 +3,15 @@ module Repl
 import ..Parser: eof_object, tokenizer ,InPort, next_token, quotes, read2, parse2, fix_for_macro, atom
 import ..Eval: eval2, Procedure
 
-# Define the load function that evaluates every expression from a file
 function load(filename)
     inport = InPort(open(filename, "r"))
     try
         repl(nothing, inport, stdout)
     finally
-        close(inport.file)  # Ensure the file is closed after reading
+        close(inport.file)
     end
 end
 
-# Define the REPL function
 function repl(prompt::Union{Nothing, String}="jscm>>> ", inport::InPort=InPort(stdin), out::IO=stdout)
     println(stderr, "Basic Julia Scheme Interpreter")
     while true

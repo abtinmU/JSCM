@@ -15,7 +15,6 @@ function prep(x; toplevel=false)
         require(x, length(x) == 2)
         return x
 
-
     elseif x[1] === _if
         if length(x) == 3
             x = [x..., nothing]  # (if t c) => (if t c nothing)
@@ -23,13 +22,11 @@ function prep(x; toplevel=false)
         require(x, length(x) == 4, "If expression error")
         return [_if, prep(x[2], toplevel=toplevel), prep(x[3], toplevel=toplevel), prep(x[4], toplevel=toplevel)]
 
-
     elseif x[1] === _set
         require(x, length(x) == 3)
         var = x[2]  # (set! non-var exp) => Error
         require(x, isa(var, Symbol2), "can set! only a symbol")
         return [_set, var, prep(x[3])]
-
 
     elseif x[1] === _define || x[1] === _definemacro
         require(x, length(x) >= 3, "Define form requires at least three parts")
@@ -133,34 +130,27 @@ function to_string(x)
         return "#t"
     elseif x === false
         return "#f"
-    elseif isa(x, Symbol2)  # Assuming Symbol2 is used for custom symbols
+    elseif isa(x, Symbol2)
         return x.name
     elseif isa(x, String)
-        # Use Julia's escape_string to handle special characters
         return "\"" * escape_string(x) * "\""
     elseif isa(x, Array)
-        # Recursively convert array elements to strings and join with spaces
         return "(" * join(map(to_string, x), " ") * ")"
     elseif isa(x, Complex)
-        # Replace Julia's 'im' with 'i' for complex numbers
         return replace(string(x), "im" => "i")
     else
         return string(x)
     end
 end
 
-
 function let2(bindings, body)
     require(bindings, all(b -> isa(b, Tuple) && length(b) == 2 && isa(b[1], Symbol2), bindings), "let2 expects bindings as tuples of (Symbol2, expression)")
 
-    # Unpack the variables and expressions from bindings
     vars = [b[1] for b in bindings]
-    vals = [prep(b[2]) for b in bindings]  # Ensure values are expanded
+    vals = [prep(b[2]) for b in bindings]
 
-    # Prepare the body: if there are multiple expressions, wrap them in a 'begin'
     prep_body = length(body) > 1 ? map(prep, body) : prep(body[1])
 
-    # Construct the lambda expression
     lambda_expr = [_lambda, vars, prep_body]
 
     return [lambda_expr, vals...]
@@ -179,6 +169,9 @@ function Callable(x)
     # Check if the typeof(x) has any methods defined for call syntax
     return !isempty(methods(x))
 end
+
+
+end # module prep
 
 
 # using Test
@@ -253,5 +246,3 @@ end
 #          end
 #      end
 #  end
-
-end # module prep

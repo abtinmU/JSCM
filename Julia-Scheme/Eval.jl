@@ -6,13 +6,12 @@ import ..env: Env, ContinuationException, throw_continuation, callcc, LookupErro
 function eval2(x, env=global_env)
 
     while true
-        if isa(x, Symbol2)  # Variable reference or built-in operator
+        if isa(x, Symbol2)  
             var_name = x.name
-            # Attempt to find the variable in the environment chain
             found_env = find(env, x)
             if found_env !== nothing
                 return found_env.mappings[var_name]
-            elseif haskey(global_env.mappings, var_name)  # Check the global environment for built-in functions/operators
+            elseif haskey(global_env.mappings, var_name)
                 return global_env.mappings[var_name]
             else
                 throw(KeyError("Variable or operator $var_name not found"))
@@ -66,19 +65,19 @@ function eval2(x, env=global_env)
     end
 end
 
-# Represent a Scheme procedure (lambda)
 struct Procedure
-    parms::Any  # Parameters of the lambda
-    exp::Any  # Body of the lambda
-    env::Env  # Environment where the lambda was defined
+    parms::Any  
+    exp::Any 
+    env::Env
 end
 
 # Make Procedure instances callable
 function (proc::Procedure)(args...)
-    # Create a new environment that extends proc.env with bindings from parms to args
     lambda_env = Env(proc.parms, args, proc.env)
-    return eval2(proc.exp, lambda_env)  # Evaluate the procedure's body in the new environment
+    return eval2(proc.exp, lambda_env) 
 end
+
+end # module Eval
 
 #  tests = [
 #      "(quote (testing 1 (2.0) -3.14e159)) => (testing 1 (2.0) -3.14e+159)",
@@ -171,5 +170,3 @@ end
 #     "(twice 2 2) => TypeError expected (x), given (2 2)",
 #     "(let ((a 1) (b 2 3)) (+ a b)) => SyntaxError (let ((a 1) (b 2 3)) (+ a b)): illegal binding list"
 # ]
-
-end # module Eval

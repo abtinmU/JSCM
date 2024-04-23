@@ -5,13 +5,11 @@ import ..Parser: eof_object, tokenizer ,InPort, next_token, quotes, read2, parse
 
 using Base: readline, match
 
-# EOF object representation
 const eof_object = Symbol2("#<eof-object>")
 
 # Tokenizer pattern
 tokenizer = r"""\s*(,@|[('`,)]|"(?:[\\].|[^\\"])*"|;.*|[^\s('"`,;)]*)(.*)"""
 
-# InPort class equivalent in Julia
 mutable struct InPort
     file::IO
     line::String
@@ -28,7 +26,7 @@ function next_token(inport::InPort)
             return eof_object
         end
 
-        match_result = Base.match(tokenizer, inport.line)  # Use Base.match explicitly
+        match_result = Base.match(tokenizer, inport.line)
         if match_result !== nothing
             token, inport.line = match_result.captures
             if !isempty(token) && !startswith(token, ";")
@@ -38,7 +36,6 @@ function next_token(inport::InPort)
     end
 end
 
-# Quotes mapping
 quotes = Dict("'" => _quote, "`" => _quasiquote, "," => _unquote, ",@" => _unquotesplicing)
 
 function read2(inport::InPort)
@@ -109,6 +106,9 @@ function atom(token::String)
     end
 end
 
+end # module Parser
+
+
 # tests = [
 #     "(quote (testing 1 (2.0) -3.14e159))",
 #     "(+ 2 2)",
@@ -149,5 +149,3 @@ end
 #     println(parse2(test))
 #     println("")
 # end
-
-end # module Parser
