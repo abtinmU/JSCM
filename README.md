@@ -18,6 +18,7 @@ A lightweight and extensible Scheme interpreter implemented in Julia. This inter
 ## Project Structure
 
 ```
+JSCM
 ├── Julia-Scheme/
 │   ├── Env.jl       # Environment management for variables and scopes
 │   ├── Eval.jl      # Evaluation logic for Scheme expressions
